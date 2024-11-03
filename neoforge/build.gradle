@@ -1,0 +1,32 @@
+architectury {
+    platformSetupLoomIde()
+    neoForge()
+}
+
+loom {
+    runs {
+        data {
+            data()
+
+            // Todo: Template: Don't forget change the modid.
+            programArgs '--all', '--mod', 'example'
+            programArgs '--output', file('../src/generated/resources').absolutePath
+            programArgs '--existing', file('../src/main/resources').absolutePath
+        }
+    }
+}
+
+dependencies {
+    neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
+
+    // Todo: Template: Comment line below if you don't want to use Architecury API.
+    modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_api_version}"
+
+    common(project(path: ':', configuration: 'namedElements')) { transitive false }
+    shadowBundle project(path: ':', configuration: 'transformProductionNeoForge')
+}
+
+remapJar {
+    // Remap aw to at.
+    atAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
+}

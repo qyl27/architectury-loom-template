@@ -1,0 +1,245 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'architectury-plugin' version "${architectury_plugin_version}"
+    id 'dev.architectury.loom' version "${architectury_loom_version}"
+    id 'com.github.johnrengelman.shadow' version "${shadow_plugin_version}" apply false
+}
+
+base {
+    archivesName = rootProject.archive_base_name
+}
+
+architectury {
+    common(project.enabled_platforms.split(','))
+}
+
+loom {
+    accessWidenerPath = file('src/main/resources/example.accesswidener')
+
+    runConfigs.configureEach {
+        ideConfigGenerated = false
+    }
+}
+
+dependencies {
+    // In order to use the @Environment and @EnvironmentInterface annotations from fabric loader.
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+
+    // Todo: Template: Comment line below if you don't want to use Architecury API.
+    modApi "dev.architectury:architectury:${rootProject.architectury_api_version}"
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir file('src/generated/resources')
+            if (providers.gradleProperty('MOD_DEVELOPMENT').present) {
+                srcDir file('src/test/resources')
+            }
+        }
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'architectury-plugin'
+    apply plugin: 'dev.architectury.loom'
+
+    group = rootProject.maven_group
+    version = "${rootProject.mod_version}+mc${project.minecraft_version}"
+
+    architectury {
+        minecraft = project.minecraft_version
+    }
+
+    loom {
+        silentMojangMappingsLicense()
+
+        // Write your interface injections in architectury.common.json
+        interfaceInjection {
+            enableDependencyInterfaceInjection = true
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'ParchmentMC'
+            url = 'https://maven.parchmentmc.org'
+        }
+
+        maven {
+            name = 'Mod Menu'
+            url = 'https://maven.terraformersmc.com/releases'
+        }
+
+        maven {
+            name = 'NeoForged'
+            url = 'https://maven.neoforged.net/releases/'
+        }
+
+        mavenCentral()
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+
+        // Todo: Template: Use the mojmap by default, or you'd like yarn.
+        mappings loom.layered() {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-${rootProject.parchment_minecraft_version}:${rootProject.parchment_version}@zip")
+        }
+//        mappings "net.fabricmc:yarn:${rootProject.minecraft_version}+build.3:v2"
+
+        // Mod dependencies
+//        modImplementation "com.terraformersmc:modmenu:11.0.1"
+        // Non mod libraries
+//        implementation 'blue.endless:jankson:1.2.2'
+        // If you want nesting the mod/library in your mod (aka. Jar in jar)
+//        include 'blue.endless:jankson:1.2.2'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.release = 21
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    jar {
+        from('LICENSE') {
+            rename { "${it}_${project.archivesBaseName}" }
+        }
+    }
+
+    processResources {
+        var resourcesToReplace = [
+                'pack.mcmeta',
+                'META-INF/mods.toml',
+                'META-INF/neoforge.mods.toml',
+                'fabric.mod.json'
+        ]
+
+        var replaceTokens = [
+                mod_id                             : rootProject.mod_id,
+                mod_version                        : rootProject.mod_version,
+
+                minecraft_version                  : rootProject.minecraft_version,
+                fabric_loader_version              : rootProject.fabric_loader_version,
+                fabric_api_version                 : rootProject.fabric_api_version,
+                neoforge_loader_version            : rootProject.neoforge_loader_version,
+                neoforge_version                   : rootProject.neoforge_version,
+
+                architectury_api_version           : rootProject.architectury_api_version,
+
+                neoforge_minecraft_version_range   : rootProject.neoforge_minecraft_version_range,
+                neoforge_loader_version_range      : rootProject.neoforge_loader_version_range,
+                neoforge_version_range             : rootProject.neoforge_version_range,
+                neoforge_architectury_version_range: rootProject.neoforge_architectury_version_range,
+
+                fabric_minecraft_version_range     : rootProject.fabric_minecraft_version_range,
+                fabric_loader_version_range        : rootProject.fabric_loader_version_range,
+                fabric_api_version_range           : rootProject.fabric_api_version_range,
+                fabric_architectury_version_range  : rootProject.fabric_architectury_version_range
+        ]
+
+        inputs.properties replaceTokens
+        filteringCharset 'UTF-8'
+
+        filesMatching(resourcesToReplace) {
+            expand replaceTokens
+        }
+    }
+
+    publishing {
+        repositories {
+            mavenLocal()
+        }
+
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    base {
+        archivesName = "$rootProject.archive_base_name-$project.name"
+    }
+
+    loom {
+        accessWidenerPath = project(':').loom.accessWidenerPath
+
+        runs {
+            client {
+                client()
+
+                runDir 'run/client'
+
+                // To support the Enhanced Class Redefinition in JBR.
+                vmArg '-XX:+IgnoreUnrecognizedVMOptions'
+                vmArg '-XX:+AllowEnhancedClassRedefinition'
+
+                // https://openjdk.org/jeps/400
+                property 'file.encoding', 'COMPAT'
+            }
+
+            server {
+                server()
+                runDir 'run/server'
+                vmArg '-XX:+IgnoreUnrecognizedVMOptions'
+                vmArg '-XX:+AllowEnhancedClassRedefinition'
+                property 'file.encoding', 'COMPAT'
+            }
+        }
+    }
+
+    configurations {
+        common {
+            canBeResolved = true
+            canBeConsumed = false
+        }
+
+        compileClasspath.extendsFrom common
+        runtimeClasspath.extendsFrom common
+        developmentFabric.extendsFrom common
+        developmentNeoForge.extendsFrom common
+
+        shadowBundle {
+            canBeResolved = true
+            canBeConsumed = false
+        }
+    }
+
+    dependencies {
+    }
+
+    shadowJar {
+        exclude 'architectury.common.json'
+        configurations = [project.configurations.shadowBundle]
+        archiveClassifier = 'dev-shadow'
+    }
+
+    remapJar {
+        input.set shadowJar.archiveFile
+    }
+
+    sourcesJar {
+        def commonSources = rootProject.sourcesJar
+        dependsOn commonSources
+        from commonSources.archiveFile.map { zipTree(it) }
+    }
+
+    components.java {
+        withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+            skip()
+        }
+    }
+}
