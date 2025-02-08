@@ -1,6 +1,6 @@
 {
     "schemaVersion": 1,
-    "id": "example",
+    "id": "${mod_id}",
     "version": "${mod_version}",
     "name": "Example Mod",
     "description": "Start to make your fantastic Minecraft Mod!",
