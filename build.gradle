@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'architectury-plugin' version "${architectury_plugin_version}"
     id 'dev.architectury.loom' version "${architectury_loom_version}"
-    id 'com.github.johnrengelman.shadow' version "${shadow_plugin_version}" apply false
+    id 'com.gradleup.shadow' version "${shadow_plugin_version}" apply false
 }
 
 base {
@@ -168,7 +168,7 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'com.gradleup.shadow'
 
     base {
         archivesName = "$rootProject.archive_base_name-$project.name"
