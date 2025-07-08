@@ -8,8 +8,9 @@ loom {
         data {
             data()
 
-            // Todo: Template: Don't forget change the modid.
-            programArgs '--all', '--mod', 'example'
+            runDir 'run/data'
+
+            programArgs '--all', '--mod', "${project.mod_id}"
             programArgs '--output', file('../src/generated/resources').absolutePath
             programArgs '--existing', file('../src/main/resources').absolutePath
         }
