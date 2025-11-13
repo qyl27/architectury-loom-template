@@ -27,13 +27,6 @@ versionRange = "${neoforge_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.${mod_id}]]
-modId = "architectury"
-type = "required"
-versionRange = "${neoforge_architectury_version_range}"
-ordering = "AFTER"
-side = "BOTH"
-
 [[mixins]]
 config = "example.mixins.json"
 

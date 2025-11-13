@@ -8,7 +8,7 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
     // Todo: Template: Comment line below if you don't want to use Architecury API.
-    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_api_version}"
+//    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_api_version}"
 
     // Todo: Template: Comment line below if you don't want to use ModMenu in runtime.
     modRuntimeOnly "com.terraformersmc:modmenu:${rootProject.fabric_mod_menu_version}"

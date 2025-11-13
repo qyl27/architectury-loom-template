@@ -1,0 +1,22 @@
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
+loom {
+}
+
+dependencies {
+    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+
+    // Todo: Template: Comment line below if you don't want to use Architecury API.
+//    modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_api_version}"
+
+    common(project(path: ':', configuration: 'namedElements')) { transitive false }
+    shadowBundle project(path: ':', configuration: 'transformProductionForge')
+}
+
+remapJar {
+    // Remap aw to at.
+//    atAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
+}

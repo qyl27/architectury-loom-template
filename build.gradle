@@ -27,7 +27,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
     // Todo: Template: Comment line below if you don't want to use Architecury API.
-    modApi "dev.architectury:architectury:${rootProject.architectury_api_version}"
+//    modApi "dev.architectury:architectury:${rootProject.architectury_api_version}"
 }
 
 sourceSets {
@@ -141,6 +141,7 @@ allprojects {
                 fabric_api_version                 : rootProject.fabric_api_version,
                 neoforge_loader_version            : rootProject.neoforge_loader_version,
                 neoforge_version                   : rootProject.neoforge_version,
+                forge_version                      : rootProject.forge_version,
 
                 architectury_api_version           : rootProject.architectury_api_version,
 
@@ -152,7 +153,12 @@ allprojects {
                 fabric_minecraft_version_range     : rootProject.fabric_minecraft_version_range,
                 fabric_loader_version_range        : rootProject.fabric_loader_version_range,
                 fabric_api_version_range           : rootProject.fabric_api_version_range,
-                fabric_architectury_version_range  : rootProject.fabric_architectury_version_range
+                fabric_architectury_version_range  : rootProject.fabric_architectury_version_range,
+
+                forge_minecraft_version_range      : rootProject.forge_minecraft_version_range,
+                forge_loader_version_range         : rootProject.forge_loader_version_range,
+                forge_version_range                : rootProject.forge_version_range,
+                forge_architectury_version_range   : rootProject.forge_architectury_version_range,
         ]
 
         inputs.properties replaceTokens
@@ -214,6 +220,7 @@ subprojects {
         runtimeClasspath.extendsFrom common
         developmentFabric.extendsFrom common
         developmentNeoForge.extendsFrom common
+        developmentForge.extendsFrom common
 
         shadowBundle {
             canBeResolved = true
