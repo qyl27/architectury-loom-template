@@ -1,9 +1,9 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'architectury-plugin' version "${architectury_plugin_version}"
-    id 'dev.architectury.loom' version "${architectury_loom_version}"
-    id 'com.gradleup.shadow' version "${shadow_plugin_version}" apply false
+    id 'architectury-plugin' version '3.4-SNAPSHOT'
+    id 'dev.architectury.loom' version '1.13-SNAPSHOT'
+    id 'com.gradleup.shadow' version '9.0.+' apply false
 }
 
 base {
@@ -96,7 +96,7 @@ allprojects {
 //        modImplementation "com.terraformersmc:modmenu:11.0.1"
         // Non mod libraries
 //        implementation 'blue.endless:jankson:1.2.2'
-        // If you want nesting the mod/library in your mod (aka. Jar in jar)
+        // If you want nesting the mod/library in your mod (aka. Jar-in-jar)
 //        include 'blue.endless:jankson:1.2.2'
     }
 
