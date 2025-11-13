@@ -7,7 +7,7 @@ plugins {
 }
 
 base {
-    archivesName = rootProject.archive_base_name
+    archivesName = "$rootProject.archive_base_name-common"
 }
 
 architectury {
@@ -37,6 +37,15 @@ sourceSets {
             if (providers.gradleProperty('MOD_DEVELOPMENT').present) {
                 srcDir file('src/test/resources')
             }
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = project.base.archivesName.get()
+            from components.java
         }
     }
 }
@@ -158,12 +167,6 @@ allprojects {
         repositories {
             mavenLocal()
         }
-
-        publications {
-            maven(MavenPublication) {
-                from components.java
-            }
-        }
     }
 }
 
@@ -171,7 +174,7 @@ subprojects {
     apply plugin: 'com.gradleup.shadow'
 
     base {
-        archivesName = "$rootProject.archive_base_name-$project.name"
+        archivesName = "$rootProject.archive_base_name-${loom.getPlatform().get().id()}"
     }
 
     loom {
@@ -239,5 +242,14 @@ subprojects {
 
     shadow {
         addShadowVariantIntoJavaComponent = false
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifactId = project.base.archivesName.get()
+                from components.java
+            }
+        }
     }
 }
