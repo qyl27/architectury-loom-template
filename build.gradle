@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'architectury-plugin' version '3.4-SNAPSHOT'
     id 'dev.architectury.loom' version '1.13-SNAPSHOT'
-    id 'com.gradleup.shadow' version '9.0.+' apply false
+    id 'com.gradleup.shadow' version '9.2.+' apply false
 }
 
 base {
@@ -237,9 +237,7 @@ subprojects {
         from commonSources.archiveFile.map { zipTree(it) }
     }
 
-    components.java {
-        withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-            skip()
-        }
+    shadow {
+        addShadowVariantIntoJavaComponent = false
     }
 }
