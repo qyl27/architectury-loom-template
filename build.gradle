@@ -140,8 +140,6 @@ allprojects {
                 neoforge_loader_version            : rootProject.neoforge_loader_version,
                 neoforge_version                   : rootProject.neoforge_version,
 
-//                architectury_api_version           : rootProject.architectury_api_version,
-
                 neoforge_minecraft_version_range   : rootProject.neoforge_minecraft_version_range,
                 neoforge_loader_version_range      : rootProject.neoforge_loader_version_range,
                 neoforge_version_range             : rootProject.neoforge_version_range,
