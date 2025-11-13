@@ -94,12 +94,10 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
 
-        // Todo: Template: Use the mojmap by default, or you'd like yarn.
         mappings loom.layered() {
             officialMojangMappings()
             parchment("org.parchmentmc.data:parchment-${rootProject.parchment_minecraft_version}:${rootProject.parchment_version}@zip")
         }
-//        mappings "net.fabricmc:yarn:${rootProject.minecraft_version}+build.3:v2"
 
         // Mod dependencies
 //        modImplementation "com.terraformersmc:modmenu:11.0.1"
