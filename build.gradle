@@ -26,8 +26,8 @@ dependencies {
     // In order to use the @Environment and @EnvironmentInterface annotations from fabric loader.
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    // Todo: Template: Comment line below if you don't want to use Architecury API.
-    modApi "dev.architectury:architectury:${rootProject.architectury_api_version}"
+    // Template: Uncomment line below if you'd like to use Architecury API.
+//    modApi "dev.architectury:architectury:${rootProject.architectury_api_version}"
 }
 
 sourceSets {
@@ -142,17 +142,15 @@ allprojects {
                 neoforge_loader_version            : rootProject.neoforge_loader_version,
                 neoforge_version                   : rootProject.neoforge_version,
 
-                architectury_api_version           : rootProject.architectury_api_version,
+//                architectury_api_version           : rootProject.architectury_api_version,
 
                 neoforge_minecraft_version_range   : rootProject.neoforge_minecraft_version_range,
                 neoforge_loader_version_range      : rootProject.neoforge_loader_version_range,
                 neoforge_version_range             : rootProject.neoforge_version_range,
-                neoforge_architectury_version_range: rootProject.neoforge_architectury_version_range,
 
                 fabric_minecraft_version_range     : rootProject.fabric_minecraft_version_range,
                 fabric_loader_version_range        : rootProject.fabric_loader_version_range,
                 fabric_api_version_range           : rootProject.fabric_api_version_range,
-                fabric_architectury_version_range  : rootProject.fabric_architectury_version_range
         ]
 
         inputs.properties replaceTokens

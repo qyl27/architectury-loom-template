@@ -7,10 +7,10 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
-    // Todo: Template: Comment line below if you don't want to use Architecury API.
-    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_api_version}"
+    // Template: Uncomment line below if you'd like to use Architecury API.
+//    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_api_version}"
 
-    // Todo: Template: Comment line below if you don't want to use ModMenu in runtime.
+    // Template: Comment line below if you don't want to use ModMenu in runtime.
     modRuntimeOnly "com.terraformersmc:modmenu:${rootProject.fabric_mod_menu_version}"
 
     common(project(path: ':', configuration: 'namedElements')) { transitive false }
