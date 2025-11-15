@@ -4,9 +4,9 @@ on:
   workflow_call:
     inputs:
       mod-release:
-        required: false
+        required: true
         type: boolean
-        default: false
+        default: true
       upload-artifacts:
         required: false
         type: boolean
@@ -14,12 +14,12 @@ on:
   workflow_dispatch:
     inputs:
       mod-release:
-        required: false
+        required: true
         type: boolean
         default: false
         description: Release mode
       upload-artifacts:
-        required: false
+        required: true
         type: boolean
         default: true
         description: Upload build artifacts
