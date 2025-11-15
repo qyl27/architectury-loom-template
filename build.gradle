@@ -34,9 +34,6 @@ sourceSets {
     main {
         resources {
             srcDir file('src/generated/resources')
-            if (providers.gradleProperty('MOD_DEVELOPMENT').present) {
-                srcDir file('src/test/resources')
-            }
         }
     }
 }
@@ -58,6 +55,19 @@ allprojects {
 
     group = rootProject.maven_group
     version = "${rootProject.mod_version}+mc${project.minecraft_version}"
+
+    var release = 'true'.equalsIgnoreCase(System.getenv('MOD_RELEASE'))
+    var isInCI = 'true'.equalsIgnoreCase(System.getenv('MOD_CI'))
+    if (isInCI) {
+        var buildNumber = System.getenv('MOD_CI_BUILD_NUMBER')
+        if (buildNumber != null) {
+            version += "-build.${buildNumber}"
+        } else {
+            if (!release) {
+                version += '-SNAPSHOT'
+            }
+        }
+    }
 
     architectury {
         minecraft = project.minecraft_version
@@ -122,46 +132,48 @@ allprojects {
         }
     }
 
-    processResources {
-        var resourcesToReplace = [
-                'pack.mcmeta',
-                'META-INF/mods.toml',
-                'META-INF/neoforge.mods.toml',
-                'fabric.mod.json'
-        ]
-
-        var replaceTokens = [
-                mod_id                             : rootProject.mod_id,
-                mod_version                        : rootProject.mod_version,
-
-                minecraft_version                  : rootProject.minecraft_version,
-                fabric_loader_version              : rootProject.fabric_loader_version,
-                fabric_api_version                 : rootProject.fabric_api_version,
-                neoforge_loader_version            : rootProject.neoforge_loader_version,
-                neoforge_version                   : rootProject.neoforge_version,
-
-                neoforge_minecraft_version_range   : rootProject.neoforge_minecraft_version_range,
-                neoforge_loader_version_range      : rootProject.neoforge_loader_version_range,
-                neoforge_version_range             : rootProject.neoforge_version_range,
-
-                fabric_minecraft_version_range     : rootProject.fabric_minecraft_version_range,
-                fabric_loader_version_range        : rootProject.fabric_loader_version_range,
-                fabric_api_version_range           : rootProject.fabric_api_version_range,
-        ]
-
-        inputs.properties replaceTokens
-        filteringCharset 'UTF-8'
-
-        filesMatching(resourcesToReplace) {
-            expand replaceTokens
-        }
-    }
-
     publishing {
         repositories {
             mavenLocal()
         }
     }
+
+    var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+        var properties = [
+                mod_id                          : project.mod_id,
+                mod_version                     : project.mod_version,
+                mod_name                        : project.mod_name,
+                mod_description                 : project.mod_description,
+                mod_authors                     : project.mod_authors,
+                mod_credits                     : project.mod_credits,
+                mod_license                     : project.mod_license,
+                mod_homepage                    : project.mod_homepage,
+                mod_sources                     : project.mod_sources,
+                mod_issues_page                 : project.mod_issues_page,
+                maven_group                     : project.maven_group,
+                archive_base_name               : project.archive_base_name,
+
+                minecraft_version               : project.minecraft_version,
+
+                neoforge_loader_version         : project.neoforge_loader_version,
+                neoforge_version                : project.neoforge_version,
+                neoforge_minecraft_version_range: project.neoforge_minecraft_version_range,
+                neoforge_loader_version_range   : project.neoforge_loader_version_range,
+                neoforge_version_range          : project.neoforge_version_range,
+
+                fabric_loader_version           : project.fabric_loader_version,
+                fabric_api_version              : project.fabric_api_version,
+                fabric_minecraft_version_range  : project.fabric_minecraft_version_range,
+                fabric_loader_version_range     : project.fabric_loader_version_range,
+                fabric_api_version_range        : project.fabric_api_version_range,
+        ]
+        inputs.properties properties
+        expand properties
+        from 'src/main/templates'
+        into 'build/generated/sources/mod-metadata'
+    }
+    sourceSets.main.resources.srcDir generateModMetadata
+    ideaSyncTask.dependsOn generateModMetadata
 }
 
 subprojects {
