@@ -173,7 +173,7 @@ allprojects {
         into 'build/generated/sources/mod-metadata'
     }
     sourceSets.main.resources.srcDir generateModMetadata
-    ideaSyncTask.dependsOn generateModMetadata
+    processResources.dependsOn generateModMetadata
 }
 
 subprojects {
