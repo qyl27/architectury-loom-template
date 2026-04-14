@@ -1,9 +1,10 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'architectury-plugin' version '3.4-SNAPSHOT'
-    id 'dev.architectury.loom' version '1.13-SNAPSHOT'
-    id 'com.gradleup.shadow' version '9.2.+' apply false
+    id 'architectury-plugin' version '3.5-SNAPSHOT' // Use architectury plugin 3.5 for loom-no-remap
+    // XXX: Undocumented and arch loom no remap variant, thank you shedaniel :|
+    id 'dev.architectury.loom-no-remap' version '1.14-SNAPSHOT'
+    id 'com.gradleup.shadow' version '9.3.0+' apply false
 }
 
 base {
@@ -24,10 +25,8 @@ loom {
 
 dependencies {
     // In order to use the @Environment and @EnvironmentInterface annotations from fabric loader.
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-
-    // Template: Uncomment line below if you'd like to use Architecury API.
-//    modApi "dev.architectury:architectury:${rootProject.architectury_api_version}"
+    // Optional, safe to remove, will got warning instead.
+    implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 }
 
 sourceSets {
@@ -51,7 +50,7 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
     apply plugin: 'architectury-plugin'
-    apply plugin: 'dev.architectury.loom'
+    apply plugin: 'dev.architectury.loom-no-remap'
 
     group = rootProject.maven_group
     version = "${rootProject.mod_version}+mc${project.minecraft_version}"
@@ -104,13 +103,8 @@ allprojects {
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
 
-        mappings loom.layered() {
-            officialMojangMappings()
-            parchment("org.parchmentmc.data:parchment-${rootProject.parchment_minecraft_version}:${rootProject.parchment_version}@zip")
-        }
-
-        // Mod dependencies
-//        modImplementation "com.terraformersmc:modmenu:11.0.1"
+        // Mod dependencies, we don't need modImplementation anymore.
+//        implementation "com.terraformersmc:modmenu:11.0.1"
         // Non mod libraries
 //        implementation 'blue.endless:jankson:1.2.2'
         // If you want nesting the mod/library in your mod (aka. Jar-in-jar)
@@ -119,11 +113,14 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
-        options.release = 21
+        options.release = 25
     }
 
     java {
         withSourcesJar()
+
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
     }
 
     jar {
@@ -234,10 +231,6 @@ subprojects {
         exclude 'architectury.common.json'
         configurations = [project.configurations.shadowBundle]
         archiveClassifier = 'dev-shadow'
-    }
-
-    remapJar {
-        input.set shadowJar.archiveFile
     }
 
     sourcesJar {
