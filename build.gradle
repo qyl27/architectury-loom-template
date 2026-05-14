@@ -227,10 +227,14 @@ subprojects {
     dependencies {
     }
 
+    jar {
+        archiveClassifier = 'dev'
+    }
+
     shadowJar {
         exclude 'architectury.common.json'
         configurations = [project.configurations.shadowBundle]
-        archiveClassifier = 'dev-shadow'
+        archiveClassifier = ''
     }
 
     sourcesJar {
