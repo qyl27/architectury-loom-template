@@ -6,14 +6,18 @@ architectury {
 loom {
     runs {
         data {
-            data()
-
-            runDir 'run/data'
-
-            programArgs '--all', '--mod', "${project.mod_id}"
-            programArgs '--output', file('../src/generated/resources').absolutePath
-            programArgs '--existing', file('../src/main/resources').absolutePath
+            clientData()
+            setRunDirectory file('run/data')
+            programArguments.addAll(
+                    '--all', '--mod', "${project.mod_id}",
+                    '--output', file('../src/generated/resources').absolutePath,
+                    '--existing', file('../src/main/resources').absolutePath
+            )
         }
+    }
+
+    neoForge {
+        convertAccessWideners(tasks.named('shadowJar'), 'example.accesswidener')
     }
 }
 

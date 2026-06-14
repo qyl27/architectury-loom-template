@@ -1,9 +1,8 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'architectury-plugin' version '3.5-SNAPSHOT' // Use architectury plugin 3.5 for loom-no-remap
-    // XXX: Undocumented and arch loom no remap variant, thank you shedaniel :|
-    id 'dev.architectury.loom-no-remap' version '1.14-SNAPSHOT'
+    id 'architectury-plugin' version '3.5-SNAPSHOT'
+    id 'dev.architectury.loom-no-remap' version '1.17-SNAPSHOT'
     id 'com.gradleup.shadow' version '9.3.0+' apply false
 }
 
@@ -25,7 +24,7 @@ loom {
 
 dependencies {
     // In order to use the @Environment and @EnvironmentInterface annotations from fabric loader.
-    // Optional, safe to remove, will got warning instead.
+    // Technically optional, safe to remove, but warnings will appear.
     implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 }
 
@@ -186,23 +185,27 @@ subprojects {
         runs {
             client {
                 client()
-
-                runDir 'run/client'
-
-                // To support the Enhanced Class Redefinition in JBR.
-                vmArg '-XX:+IgnoreUnrecognizedVMOptions'
-                vmArg '-XX:+AllowEnhancedClassRedefinition'
-
-                // https://openjdk.org/jeps/400
-                property 'file.encoding', 'COMPAT'
+                runDirectory = file('run/client')
             }
 
             server {
                 server()
-                runDir 'run/server'
-                vmArg '-XX:+IgnoreUnrecognizedVMOptions'
-                vmArg '-XX:+AllowEnhancedClassRedefinition'
-                property 'file.encoding', 'COMPAT'
+                runDirectory = file('run/server')
+            }
+
+            configureEach {
+                preferGradleTask = true
+
+                systemProperties.put('file.encoding', 'UTF-8')
+                systemProperties.put('stdout.encoding', 'UTF-8')
+                systemProperties.put('stderr.encoding', 'UTF-8')
+                systemProperties.put('stdio.encoding', 'UTF-8')
+
+                // To support the Enhanced Class Redefinition in JBR.
+                jvmArguments.addAll(
+                        '-XX:+IgnoreUnrecognizedVMOptions',
+                        '-XX:+AllowEnhancedClassRedefinition',
+                )
             }
         }
     }
