@@ -194,6 +194,7 @@ subprojects {
             }
 
             configureEach {
+                // Use gradle tasks like :runClient or :runServer instead of IDEA run configurations.
 //                preferGradleTask = true
 
                 systemProperties.put('file.encoding', 'UTF-8')
